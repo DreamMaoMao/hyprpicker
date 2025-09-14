@@ -49,7 +49,7 @@ class CHyprpicker {
     bool                                        m_bUseLowerCase   = false;
 
     bool                                        m_bRunning   = true;
-    float                                       m_dZoomScale = 10.0;
+    float                                       m_fZoomScale = 10.0;
 
     std::vector<std::unique_ptr<SMonitor>>      m_vMonitors;
     std::vector<std::unique_ptr<CLayerSurface>> m_vLayerSurfaces;

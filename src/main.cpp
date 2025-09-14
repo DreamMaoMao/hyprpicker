@@ -70,14 +70,14 @@ int main(int argc, char** argv, char** envp) {
                 exit(0);
             }
             case 's': {
-                g_pHyprpicker->m_dZoomScale = std::stof(optarg);
+                g_pHyprpicker->m_fZoomScale = std::stof(optarg);
                 break;
             }
 
             default: help(); exit(1);
         }
 
-        if (g_pHyprpicker->m_dZoomScale < 1.0f || g_pHyprpicker->m_dZoomScale > 10.0f) {
+        if (g_pHyprpicker->m_fZoomScale < 1.0f || g_pHyprpicker->m_fZoomScale > 10.0f) {
             std::cerr << "Scale must be between 1 and 10!\n";
             exit(1);
         }
