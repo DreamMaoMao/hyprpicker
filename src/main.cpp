@@ -9,20 +9,18 @@ static void help(void) {
               << " -h | --help              | Show this help message\n"
               << " -i | --render-inactive   | Render (freeze) inactive displays\n"
               << " -r | --radius            | Define lens radius\n"
-              << " -s | --scale             | Define lens scale\n";
+              << " -s | --scale             | Define lens scale\n"
+              << " -t | --scale-step        | Define lens scale step\n";
 }
 
 int main(int argc, char** argv, char** envp) {
     g_pHyprmag = std::make_unique<CHyprmag>();
 
     while (true) {
-        static struct option long_options[] = {{"help", no_argument, NULL, 'h'},
-                                               {"render-inactive", no_argument, NULL, 'i'},
-                                               {"radius", required_argument, NULL, 'r'},
-                                               {"scale", required_argument, NULL, 's'},
-                                               {NULL, 0, NULL, 0}};
+        static struct option long_options[] = {{"help", no_argument, NULL, 'h'},        {"render-inactive", no_argument, NULL, 'i'},  {"radius", required_argument, NULL, 'r'},
+                                               {"scale", required_argument, NULL, 's'}, {"scale-step", required_argument, NULL, 't'}, {NULL, 0, NULL, 0}};
 
-        int                  c = getopt_long(argc, argv, "hir:s:", long_options, NULL);
+        int                  c = getopt_long(argc, argv, "hir:s:t:", long_options, NULL);
 
         if (c == -1)
             break;
@@ -30,8 +28,9 @@ int main(int argc, char** argv, char** envp) {
         switch (c) {
             case 'h': help(); exit(0);
             case 'i': g_pHyprmag->m_bRenderInactive = true; break;
-            case 'r': g_pHyprmag->m_iRadius         = atoi(optarg); break;
-            case 's': g_pHyprmag->m_fScale          = atof(optarg); break;
+            case 'r': g_pHyprmag->m_iRadius = atoi(optarg); break;
+            case 's': g_pHyprmag->m_fScale = atof(optarg); break;
+            case 't': g_pHyprmag->m_fScaleStep = atof(optarg); break;
 
             default: help(); exit(1);
         }
@@ -43,6 +42,10 @@ int main(int argc, char** argv, char** envp) {
     }
     if (g_pHyprmag->m_fScale < 0.5f || g_pHyprmag->m_fScale > 10.0f) {
         std::cerr << "Scale must be between 0.5 and 10!\n";
+        exit(1);
+    }
+    if (g_pHyprmag->m_fScaleStep < 0.01f || g_pHyprmag->m_fScaleStep > 10.0f) {
+        std::cerr << "Scale step must be between 0.01 and 10!\n";
         exit(1);
     }
 

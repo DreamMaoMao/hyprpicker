@@ -125,7 +125,29 @@ void Events::handlePointerLeave(void* data, struct wl_pointer* wl_pointer, uint3
 }
 
 void Events::handlePointerAxis(void* data, wl_pointer* wl_pointer, uint32_t time, uint32_t axis, wl_fixed_t value) {
-    // ignored
+    // only handle vertical scroll
+    if (axis != WL_POINTER_AXIS_VERTICAL_SCROLL)
+        return;
+
+    // determine scroll value
+    double scrollValue = wl_fixed_to_double(value);
+
+    // apply scroll value
+    if (scrollValue > 0) {
+        // scroll down - zoom out
+        g_pHyprmag->m_fScale = std::max(1.0f, g_pHyprmag->m_fScale - g_pHyprmag->m_fScaleStep);
+    } else {
+        // scroll up - zoom in
+        g_pHyprmag->m_fScale = std::min(10.0f, g_pHyprmag->m_fScale + g_pHyprmag->m_fScaleStep);
+    }
+
+    // mark dirty
+    g_pHyprmag->markDirty();
+
+    // render surface
+    if (g_pHyprmag->m_pLastSurface) {
+        g_pHyprmag->renderSurface(g_pHyprmag->m_pLastSurface);
+    }
 }
 
 void Events::handlePointerMotion(void* data, struct wl_pointer* wl_pointer, uint32_t time, wl_fixed_t surface_x, wl_fixed_t surface_y) {
