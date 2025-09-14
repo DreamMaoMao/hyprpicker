@@ -26,22 +26,14 @@ int main(int argc, char** argv, char** envp) {
 
     while (true) {
         int                  option_index   = 0;
-        static struct option long_options[] = {{"autocopy", no_argument, nullptr, 'a'},
-                                               {"format", required_argument, nullptr, 'f'},
-                                               {"help", no_argument, nullptr, 'h'},
-                                               {"no-fancy", no_argument, nullptr, 'b'},
-                                               {"notify", no_argument, nullptr, 'n'},
-                                               {"render-inactive", no_argument, nullptr, 'r'},
-                                               {"no-zoom", no_argument, nullptr, 'z'},
-                                               {"no-fractional", no_argument, nullptr, 't'},
-                                               {"quiet", no_argument, nullptr, 'q'},
-                                               {"verbose", no_argument, nullptr, 'v'},
-                                               {"disable-preview", no_argument, nullptr, 'd'},
-                                               {"lowercase-hex", no_argument, nullptr, 'l'},
-                                               {"version", no_argument, nullptr, 'V'},
-                                               {nullptr, 0, nullptr, 0}};
+        static struct option long_options[] = {
+            {"autocopy", no_argument, nullptr, 'a'}, {"format", required_argument, nullptr, 'f'},    {"help", no_argument, nullptr, 'h'},
+            {"no-fancy", no_argument, nullptr, 'b'}, {"notify", no_argument, nullptr, 'n'},          {"render-inactive", no_argument, nullptr, 'r'},
+            {"no-zoom", no_argument, nullptr, 'z'},  {"no-fractional", no_argument, nullptr, 't'},   {"quiet", no_argument, nullptr, 'q'},
+            {"verbose", no_argument, nullptr, 'v'},  {"disable-preview", no_argument, nullptr, 'd'}, {"lowercase-hex", no_argument, nullptr, 'l'},
+            {"version", no_argument, nullptr, 'V'},  {"scale", required_argument, nullptr, 's'},     {nullptr, 0, nullptr, 0}};
 
-        int                  c = getopt_long(argc, argv, ":f:hnbarzqvtdlV", long_options, &option_index);
+        int c = getopt_long(argc, argv, ":f:hnbarzqvtdlVs:", long_options, &option_index);
         if (c == -1)
             break;
 
@@ -77,8 +69,17 @@ int main(int argc, char** argv, char** envp) {
                 std::cout << "hyprpicker v" << HYPRPICKER_VERSION << "\n";
                 exit(0);
             }
+            case 's': {
+                g_pHyprpicker->m_dZoomScale = std::stof(optarg);
+                break;
+            }
 
             default: help(); exit(1);
+        }
+
+        if (g_pHyprpicker->m_dZoomScale < 1.0f || g_pHyprpicker->m_dZoomScale > 10.0f) {
+            std::cerr << "Scale must be between 1 and 10!\n";
+            exit(1);
         }
     }
 
